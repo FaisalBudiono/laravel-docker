@@ -1,0 +1,75 @@
+version: "3.8"
+name: "laravel-boiletplate"
+
+services:
+  app:
+    build:
+      context: ./app
+      target: php-final
+    image: local/php-laravel-boilerplate
+    container_name: laravel-boilerplate-app
+    working_dir: /var/www/html
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - ${API_DIR}:/var/www/html
+    networks:
+      - laravel-boilerplate-network
+
+  nginx:
+    build: ./nginx
+    image: local/laravel-boilerplate-nginx
+    container_name: laravel-boilerplate-nginx
+    ports:
+      - "${API_PORT}:80"
+    depends_on:
+      - app
+    volumes:
+      - ${API_DIR}:/var/www/html
+    networks:
+      - laravel-boilerplate-network
+
+  mysql:
+    image: mysql:8.0.26
+    container_name: laravel-boilerplate-mysql
+    command: --default-authentication-plugin=mysql_native_password --sort_buffer_size=1073741824
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - ./mysql/dbdata:/var/lib/mysql
+    networks:
+      - laravel-boilerplate-network
+
+  redis:
+    image: redis:6-alpine
+    container_name: laravel-boilerplate-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - laravel-boilerplate-network
+
+  worker:
+    build:
+      context: ./app
+      target: php-worker
+    container_name: laravel-boilerplate-worker
+    working_dir: /var/www/html
+    depends_on:
+      - app
+    volumes:
+      - ${API_DIR}:/var/www/html
+    networks:
+      - laravel-boilerplate-network
+
+networks:
+  laravel-boilerplate-network:
+    name: laravel-boilerplate-network
+    driver: bridge
