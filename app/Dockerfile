@@ -53,11 +53,11 @@ RUN echo 'alias pw="phpunit-watcher watch --testdox"' >> ~/.bashrc \
     # && echo "alias ppc='pp --coverage --cache-directory ./ ./tests'" >> ~/.bashrc \
     && echo "alias ppc='pp --coverage'" >> ~/.bashrc \
     && echo "alias pwf='pw --filter'" >> ~/.bashrc \
-    && echo "alias ppf='./vendor/bin/paratest -f --filter'" >> ~/.bashrc \
-    && echo "alias ppff='./vendor/bin/paratest -f'" >> ~/.bashrc \
-    && echo "alias ppfg='./vendor/bin/paratest -f --group'" >> ~/.bashrc \
+    && echo "alias ppf='./vendor/bin/paratest --functional --filter'" >> ~/.bashrc \
+    && echo "alias ppff='./vendor/bin/paratest --functional'" >> ~/.bashrc \
+    && echo "alias ppfg='./vendor/bin/paratest --functional --group'" >> ~/.bashrc \
     && echo "alias pps='./vendor/bin/paratest --stop-on-failure'" >> ~/.bashrc \
-    && echo "alias ppsf='./vendor/bin/paratest --stop-on-failure -f --filter'" >> ~/.bashrc \
+    && echo "alias ppsf='./vendor/bin/paratest --stop-on-failure --functional --filter'" >> ~/.bashrc \
     && echo "alias cw='chown -R www-data:www-data'" >> ~/.bashrc
 
 
