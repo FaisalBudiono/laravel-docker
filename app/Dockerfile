@@ -1,6 +1,5 @@
 FROM php:8.2-fpm AS php-base
 WORKDIR /var/www/html
-ENV EXTENSION_DIR=no-debug-non-zts-20220829
 # Install Composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php \
@@ -45,9 +44,8 @@ RUN cp /usr/local/etc/php/php.ini /usr/local/etc/php/php.ini-backup \
 FROM php-base AS php-final
 RUN composer global require spatie/phpunit-watcher \
     && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc
-RUN pecl install xdebug \
-    && echo "zend_extension=/usr/local/lib/php/extensions/${EXTENSION_DIR}/xdebug.so" >> /usr/local/etc/php/php.ini \
-    && echo "xdebug.mode=coverage" >> /usr/local/etc/php/php.ini
+RUN pecl install pcov \
+    && echo "extension=pcov.so" >> /usr/local/etc/php/php.ini
 RUN echo 'alias pw="phpunit-watcher watch --testdox"' >> ~/.bashrc \
     && echo "alias pp='php artisan test --parallel'" >> ~/.bashrc \
     && echo "alias ppc='php artisan test --parallel --coverage --coverage-text'" >> ~/.bashrc \
