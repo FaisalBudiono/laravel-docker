@@ -50,8 +50,7 @@ RUN pecl install xdebug \
     && echo "xdebug.mode=coverage" >> /usr/local/etc/php/php.ini
 RUN echo 'alias pw="phpunit-watcher watch --testdox"' >> ~/.bashrc \
     && echo "alias pp='php artisan test --parallel'" >> ~/.bashrc \
-    # && echo "alias ppc='pp --coverage --cache-directory ./ ./tests'" >> ~/.bashrc \
-    && echo "alias ppc='pp --coverage'" >> ~/.bashrc \
+    && echo "alias ppc='php artisan test --parallel --coverage --coverage-text'" >> ~/.bashrc \
     && echo "alias pwf='pw --filter'" >> ~/.bashrc \
     && echo "alias ppf='./vendor/bin/paratest --functional --filter'" >> ~/.bashrc \
     && echo "alias ppff='./vendor/bin/paratest --functional'" >> ~/.bashrc \
