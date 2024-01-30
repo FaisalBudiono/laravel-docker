@@ -43,11 +43,11 @@ RUN cp /usr/local/etc/php/php.ini /usr/local/etc/php/php.ini-backup \
 
 
 FROM php-base AS php-final
+RUN composer global require spatie/phpunit-watcher \
+    && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc
 RUN pecl install xdebug \
     && echo "zend_extension=/usr/local/lib/php/extensions/${EXTENSION_DIR}/xdebug.so" >> /usr/local/etc/php/php.ini \
     && echo "xdebug.mode=coverage" >> /usr/local/etc/php/php.ini
-RUN composer global require spatie/phpunit-watcher \
-    && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc
 RUN echo 'alias pw="phpunit-watcher watch --testdox"' >> ~/.bashrc \
     && echo "alias pp='php artisan test --parallel'" >> ~/.bashrc \
     # && echo "alias ppc='pp --coverage --cache-directory ./ ./tests'" >> ~/.bashrc \
