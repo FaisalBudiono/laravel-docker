@@ -1,4 +1,4 @@
-FROM php:8.2-fpm AS php-base
+FROM php:8.2-fpm AS base
 WORKDIR /var/www/html
 # Install Composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -40,8 +40,13 @@ RUN cp /usr/local/etc/php/php.ini /usr/local/etc/php/php.ini-backup \
     && sed 's/post_max_size = 8M/post_max_size = 100M/' </usr/local/etc/php/php.ini-backup >/usr/local/etc/php/php.ini \
     && rm /usr/local/etc/php/php.ini-backup
 
+FROM base as worker
+RUN apt-get update \
+    && apt-get install -y supervisor
+COPY laravel-worker-api.conf /etc/supervisor/supervisord.conf
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
 
-FROM php-base AS php-final
+FROM base AS final
 RUN composer global require spatie/phpunit-watcher \
     && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc
 RUN pecl install pcov \
@@ -56,10 +61,3 @@ RUN echo 'alias pw="phpunit-watcher watch --testdox"' >> ~/.bashrc \
     && echo "alias pps='./vendor/bin/paratest --stop-on-failure'" >> ~/.bashrc \
     && echo "alias ppsf='./vendor/bin/paratest --stop-on-failure --functional --filter'" >> ~/.bashrc \
     && echo "alias cw='chown -R www-data:www-data'" >> ~/.bashrc
-
-
-FROM php-base as php-worker
-RUN apt-get update \
-    && apt-get install -y supervisor
-COPY laravel-worker-api.conf /etc/supervisor/supervisord.conf
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]

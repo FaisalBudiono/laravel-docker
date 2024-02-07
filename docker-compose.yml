@@ -5,7 +5,7 @@ services:
   app:
     build:
       context: ./app
-      target: php-final
+      target: final
     image: local/php-laravel-boilerplate
     container_name: laravel-boilerplate-app
     working_dir: /var/www/html
@@ -59,7 +59,7 @@ services:
   worker:
     build:
       context: ./app
-      target: php-worker
+      target: worker
     container_name: laravel-boilerplate-worker
     working_dir: /var/www/html
     depends_on:
